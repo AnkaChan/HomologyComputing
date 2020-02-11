@@ -146,6 +146,38 @@ def finishRowReducing(B):
 
    return B
 
+def finishRowReducing2(B):
+   numRows, numCols = B.shape
+
+   i,j = 0,0
+   while True:
+      if i >= numRows or j >= numCols:
+         break
+
+      if B[i, j] == 0:
+         nonzeroRow = i
+         while nonzeroRow < numRows and B[nonzeroRow, j] == 0:
+            nonzeroRow += 1
+
+         if nonzeroRow == numRows:
+            j += 1
+            continue
+
+         rowSwap(B, i, nonzeroRow)
+
+      pivot = B[i, j]
+      scaleRow(B, i, 1.0 / pivot)
+
+      for otherRow in range(0, numRows):
+         if otherRow == i:
+            continue
+         if B[otherRow, j] != 0:
+            scaleAmt = -B[otherRow, j]
+            rowCombine(B, otherRow, i, scaleAmt)
+
+      i += 1; j+= 1
+
+   return B
 
 def numPivotCols(A):
    z = numpy.zeros(A.shape[0])
@@ -174,41 +206,42 @@ def bettiNumber(d_k, d_kplus1):
 
    return kernelDim - imageDim
 
+if __name__ == '__main__':
 
-bd0 = numpy.array([[0,0,0,0,0]])
-bd1 = numpy.array([[-1,-1,-1,-1,0,0,0,0], [1,0,0,0,-1,-1,0,0],
-     [0,1,0,0,1,0,-1,-1], [0,0,1,0,0,1,1,0], [0,0,0,1,0,0,0,1]])
-bd2 = numpy.array([[1,1,0,0],[-1,0,1,0],[0,-1,-1,0],
-     [0,0,0,0],[1,0,0,1],[0,1,0,-1],
-     [0,0,1,1],[0,0,0,0]])
-bd3 = numpy.array([[-1],[1],[-1],[1]])
-
-
-print("Example complex from post")
-print("0th homology: %d" % bettiNumber(bd0,bd1))
-print("1st homology: %d" % bettiNumber(bd1,bd2))
-print("2nd homology: %d" % bettiNumber(bd2,bd3))
+   bd0 = numpy.array([[0,0,0,0,0]])
+   bd1 = numpy.array([[-1,-1,-1,-1,0,0,0,0], [1,0,0,0,-1,-1,0,0],
+        [0,1,0,0,1,0,-1,-1], [0,0,1,0,0,1,1,0], [0,0,0,1,0,0,0,1]])
+   bd2 = numpy.array([[1,1,0,0],[-1,0,1,0],[0,-1,-1,0],
+        [0,0,0,0],[1,0,0,1],[0,1,0,-1],
+        [0,0,1,1],[0,0,0,0]])
+   bd3 = numpy.array([[-1],[1],[-1],[1]])
 
 
-mobiusD1 = numpy.array([
-   [-1,-1,-1,-1, 0, 0, 0, 0, 0, 0],
-   [ 1, 0, 0, 0,-1,-1,-1, 0, 0, 0],
-   [ 0, 1, 0, 0, 1, 0, 0,-1,-1, 0],
-   [ 0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
-])
+   print("Example complex from post")
+   print("0th homology: %d" % bettiNumber(bd0,bd1))
+   print("1st homology: %d" % bettiNumber(bd1,bd2))
+   print("2nd homology: %d" % bettiNumber(bd2,bd3))
 
-mobiusD2 = numpy.array([
-   [ 1, 0, 0, 0, 1],
-   [ 0, 0, 0, 1, 0],
-   [-1, 0, 0, 0, 0],
-   [ 0, 0, 0,-1,-1],
-   [ 0, 1, 0, 0, 0],
-   [ 1,-1, 0, 0, 0],
-   [ 0, 0, 0, 0, 1],
-   [ 0, 1, 1, 0, 0],
-   [ 0, 0,-1, 1, 0],
-   [ 0, 0, 1, 0, 0],
-])
 
-print("Mobius Band")
-print("1st homology: %d" % bettiNumber(mobiusD1, mobiusD2))
+   mobiusD1 = numpy.array([
+      [-1,-1,-1,-1, 0, 0, 0, 0, 0, 0],
+      [ 1, 0, 0, 0,-1,-1,-1, 0, 0, 0],
+      [ 0, 1, 0, 0, 1, 0, 0,-1,-1, 0],
+      [ 0, 0, 0, 1, 0, 0, 1, 0, 1, 1],
+   ])
+
+   mobiusD2 = numpy.array([
+      [ 1, 0, 0, 0, 1],
+      [ 0, 0, 0, 1, 0],
+      [-1, 0, 0, 0, 0],
+      [ 0, 0, 0,-1,-1],
+      [ 0, 1, 0, 0, 0],
+      [ 1,-1, 0, 0, 0],
+      [ 0, 0, 0, 0, 1],
+      [ 0, 1, 1, 0, 0],
+      [ 0, 0,-1, 1, 0],
+      [ 0, 0, 1, 0, 0],
+   ])
+
+   print("Mobius Band")
+   print("1st homology: %d" % bettiNumber(mobiusD1, mobiusD2))
